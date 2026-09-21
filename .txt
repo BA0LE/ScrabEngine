@@ -1,0 +1,34 @@
+scraper_engine/
+├── main.py                  # entry point: khởi tạo ScraperEngine → add_task() → run()
+├── config/
+│   └── settings.py          # class Settings: MAX_RETRIES, TIMEOUT, USER_AGENT...
+├── core/
+│   ├── engine.py            # class ScraperEngine
+│   ├── scheduler.py         # class Scheduler
+│   └── pipeline.py          # class Pipeline
+├── fetchers/
+│   ├── base_fetcher.py      # class BaseFetcher (ABC)
+│   ├── http_fetcher.py      # class HttpFetcher
+│   └── selenium_fetcher.py  # class SeleniumFetcher
+├── parsers/
+│   ├── base_parser.py       # class BaseParser (ABC)
+│   └── html_parser.py       # class HtmlParser
+├── storage/
+│   ├── base_storage.py      # class BaseStorage (ABC)
+│   ├── json_storage.py      # class JsonStorage
+│   └── db_storage.py        # class DbStorage
+├── middlewares/
+│   ├── retry.py             # class RetryMiddleware
+│   ├── proxy.py             # class ProxyMiddleware
+│   └── rate_limiter.py      # class RateLimiter
+├── models/
+│   └── item.py              # class Item (dataclass)
+├── utils/
+│   ├── logger.py            # get_logger(name)
+│   └── helpers.py           # normalize_url(url), clean_text(text)
+├── tests/
+│   ├── test_engine.py
+│   ├── test_fetchers.py
+│   └── test_parsers.py
+├── requirements.txt
+└── README.md
