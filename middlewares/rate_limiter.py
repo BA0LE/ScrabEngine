@@ -1,5 +1,6 @@
 import time
 from collections import deque
+import asyncio
 
 class RateLimiter:
     def __init__(self, 
@@ -28,8 +29,8 @@ class RateLimiter:
             return True
         return False
 
-    def wait(self, domain=None):
+    async def wait(self, domain=None):
         while not self.is_allowed():
             sleep_for = self.time_window - (time.time() - self.request_times[0])
-            time.sleep(max(0.001, sleep_for))
+            asyncio.sleep(max(0.001, sleep_for))
         return True

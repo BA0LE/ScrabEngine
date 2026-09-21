@@ -12,18 +12,19 @@ async def main():
             "TIMEOUT": 10,
             "RATE_LIMIT": 2,              #max s 2 request
             "RATE_WINDOW": 1.0,           #per sec
-            "COOKIES_PATH": "Cookies.json"
+            "COOKIES_PATH": "Cookies.json",
+            "HEADLESS": False
         },
         allowed_domains=None,  #None to Crawl all domain
         max_depth=2,
     )
 
-    engine.add_task("https://www.facebook.com/", depth=1, priority=0)
+    engine.add_task("https://www.facebook.com", depth=1, priority=0)
 
     try:
         await engine.run()
     finally:
-        engine.stop()
+        await engine.stop()
 
 
 if __name__ == "__main__":

@@ -66,12 +66,13 @@ class ScraperEngine:
         self.scheduler.add_task(task, priority=priority)
 
     async def _fetch(self, url):
-        # HttpFetcher.fetch là sync (dùng `requests`, blocking) -> chạy trong thread riêng
-        # để không chặn event loop. DynamicFetcher (Playwright sync API) cũng vậy.
-        return await asyncio.to_thread(self.fetcher.fetch, url)
+        fetch = self.fetcher.fetch
+        if asyncio.iscoroutinefunction(fetch):
+            return await fetch(url)
+        return await asyncio.to_thread(fetch, url)
 
     async def _process_task(self, task):
-        self.rate_limiter.wait()
+        await self.rate_limiter.wait()
         html = await self._fetch(task.url)
         item = self.parser.parse(html, base_url=task.url)
         item["url"] = task.url
@@ -103,10 +104,15 @@ class ScraperEngine:
                 for link in item.get("links", []):
                     self.add_task(link, depth=task.depth + 1, parent_url=task.url)
 
-    def stop(self):
+    async def stop(self):  # đổi từ sync `def stop` -> async `def stop`
         self._running = False
-        if hasattr(self.fetcher, "close"):
-            self.fetcher.close()
+        close = getattr(self.fetcher, "close", None)
+        if close is None:
+            return
+        if asyncio.iscoroutinefunction(close):
+            await close()
+        else:
+            close()
 
 
 ScaperEngine = ScraperEngine  # giữ alias phòng khi nơi khác lỡ import theo tên cũ (có lỗi chính tả)
